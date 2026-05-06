@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Node
+node_modules/
+dist/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+
+db.sqlite3
+faiss_index/
+uploads/*
+!uploads/.gitkeep
+.dockerignore
