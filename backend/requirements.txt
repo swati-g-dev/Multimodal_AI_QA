@@ -1,0 +1,38 @@
+fastapi
+uvicorn
+python-dotenv
+# pydantic
+pydantic-settings
+python-multipart
+pypdf
+# motor==3.3.2
+
+# AI + processing 
+langchain
+faiss-cpu
+# sentence-transformers
+# openai
+# whisper
+moviepy
+# langchain-openai==0.0.2
+# openai-whisper==20231117
+
+# DB + cache
+# redis
+# pymongo
+
+# Testing
+pytest
+pytest-cov
+# httpx
+
+# langchain-community 
+# langchain-ollama 
+# sqlalchemy 
+# python-jose[cryptography] 
+# passlib[bcrypt] 
+# whisper-openai 
+# torch 
+# torchvision 
+# torchaudio 
+# --index-url https://download.pytorch.org/whl/cpu
