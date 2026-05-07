@@ -19,7 +19,7 @@ moviepy
 
 # DB + cache
 # redis
-pymongo[srv]==3.12
+pymongo
 
 # Testing
 pytest

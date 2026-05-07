@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from app.core.config import settings
+from app.config import settings
 
 client = MongoClient(settings.MONGO_URI)
 db = client["multimodal_ai_qa"]
