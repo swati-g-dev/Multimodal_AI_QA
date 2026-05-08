@@ -1,8 +1,8 @@
 import os
-from bson import ObjectId
 from app.storage.file_manager import save_file
 from app.db.mongo import documents_collection
 from app.services.pdf_parser import extract_text_from_pdf, store_pdf_text
+from app.services.transcription import transcribe_media, store_transcript
 
 ALLOWED_TYPES = {
     "pdf": "pdf",
@@ -17,7 +17,6 @@ def get_file_type(filename: str):
     return ALLOWED_TYPES.get(ext)
 
 async def process_upload(file):
-    # Validate file type
     file_type = get_file_type(file.filename)
     if not file_type:
         raise ValueError("Unsupported file type")
@@ -35,18 +34,26 @@ async def process_upload(file):
     result = documents_collection.insert_one(doc)
     document_id = str(result.inserted_id)
 
-    text = None
-
-# Upload PDF → Save file → Extract text → Store in MongoDB
     # PDF Processing
     if file_type == "pdf":
-        text = extract_text_from_pdf(path)
-        store_pdf_text(ObjectId(document_id), text)
+        try:
+            text = extract_text_from_pdf(path)
+            if not text.strip():
+                raise ValueError("No text extracted from PDF")
+            store_pdf_text(result.inserted_id, text)
+        except Exception as e:
+            raise ValueError(f"Failed to process PDF: {str(e)}")
 
+    # Audio/Video Processing
+    if file_type in ["audio", "video"]:
+        try:
+            text, segments = transcribe_media(path)
+            store_transcript(result.inserted_id, text, segments)
+        except Exception as e:
+            raise ValueError(f"Failed to process media: {str(e)}")
 
     return {
         "document_id": str(result.inserted_id),
         "file_type": file_type,
         "path": path,
-        "extracted_text": text 
     }

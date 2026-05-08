@@ -15,7 +15,7 @@ faiss-cpu
 # whisper
 moviepy
 # langchain-openai==0.0.2
-# openai-whisper==20231117
+openai-whisper
 
 # DB + cache
 # redis
