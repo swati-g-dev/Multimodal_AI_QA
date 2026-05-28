@@ -5,7 +5,7 @@ WORKDIR /app
 # System dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # # Upgrade pip + increase timeout and retries
 # RUN pip install --upgrade pip setuptools wheel
@@ -23,5 +23,5 @@ RUN pip install --no-cache-dir \
 
 COPY . .
 
-# EXPOSE 8000
+EXPOSE 8000
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

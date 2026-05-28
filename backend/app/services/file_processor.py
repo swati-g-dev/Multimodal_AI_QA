@@ -1,8 +1,11 @@
 import os
+from bson import ObjectId
 from app.storage.file_manager import save_file
 from app.db.mongo import documents_collection
 from app.services.pdf_parser import extract_text_from_pdf, store_pdf_text
 from app.services.transcription import transcribe_media, store_transcript
+from app.services.chunker import chunk_text
+from app.services.vector_store import add_to_vectorstore
 
 ALLOWED_TYPES = {
     "pdf": "pdf",
@@ -34,13 +37,15 @@ async def process_upload(file):
     result = documents_collection.insert_one(doc)
     document_id = str(result.inserted_id)
 
+    text=""
+
     # PDF Processing
     if file_type == "pdf":
         try:
             text = extract_text_from_pdf(path)
             if not text.strip():
                 raise ValueError("No text extracted from PDF")
-            store_pdf_text(result.inserted_id, text)
+            store_pdf_text(ObjectId(document_id), text)
         except Exception as e:
             raise ValueError(f"Failed to process PDF: {str(e)}")
 
@@ -48,12 +53,19 @@ async def process_upload(file):
     if file_type in ["audio", "video"]:
         try:
             text, segments = transcribe_media(path)
-            store_transcript(result.inserted_id, text, segments)
+            store_transcript(document_id, text, segments)
         except Exception as e:
             raise ValueError(f"Failed to process media: {str(e)}")
+        
+    # Embedding Pipeline
+# Upload → Extract text → Chunk → Embed → Store in FAISS
+    if text:
+        chunks = chunk_text(text)
+        add_to_vectorstore(chunks, document_id)
+
 
     return {
-        "document_id": str(result.inserted_id),
+        "document_id": document_id,
         "file_type": file_type,
         "path": path,
     }

@@ -4,7 +4,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "Multimodal AI QA"
     DEBUG: bool = True
 
-    OPENAI_API_KEY: str
+    GROQ_API_KEY: str
 
     MONGO_URI: str
     REDIS_HOST: str

@@ -1,5 +1,6 @@
 import whisper
 from app.db.mongo import transcripts_collection
+from bson import ObjectId
 
 # Load model once (important for performance)
 model = whisper.load_model("base")
@@ -12,10 +13,10 @@ def transcribe_media(file_path: str):
     return text, segments
 
 
-def store_transcript(document_id, text: str, segments: list):
+def store_transcript(document_id:str, text: str, segments: list):
     """Store transcription in the database."""
     result = transcripts_collection.insert_one({
-        "document_id": document_id,
+        "document_id": ObjectId(document_id),
         "text": text,
         "segments": segments
     })

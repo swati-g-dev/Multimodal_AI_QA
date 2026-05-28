@@ -1,38 +1,34 @@
 fastapi
-uvicorn
-python-dotenv
-# pydantic
-pydantic-settings
+uvicorn[standard]
 python-multipart
+pydantic
+pydantic-settings
+python-dotenv
+
+# DB + cache
+pymongo
+dnspython
+redis
+
 pypdf
-# motor==3.3.2
+openai-whisper
+ffmpeg-python
 
 # AI + processing 
 langchain
-faiss-cpu
-# sentence-transformers
-# openai
-# whisper
-moviepy
-# langchain-openai==0.0.2
-openai-whisper
+langchain-core
+langchain-community 
+langchain-text-splitters
+langchain-huggingface
+langchain-groq
 
-# DB + cache
-# redis
-pymongo
+faiss-cpu
+sentence-transformers
+
+torch
+numpy
 
 # Testing
 pytest
 pytest-cov
-# httpx
-
-# langchain-community 
-# langchain-ollama 
-# sqlalchemy 
-# python-jose[cryptography] 
-# passlib[bcrypt] 
-# whisper-openai 
-# torch 
-# torchvision 
-# torchaudio 
-# --index-url https://download.pytorch.org/whl/cpu
+httpx
