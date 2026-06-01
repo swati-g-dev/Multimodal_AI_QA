@@ -9,29 +9,8 @@ embedding_model = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-vector_db = None
-
-
-def load_or_create_db():
-    global vector_db
-
-    if os.path.exists(VECTOR_DIR):
-        vector_db = FAISS.load_local(
-            VECTOR_DIR,
-            embedding_model,
-            allow_dangerous_deserialization=True
-        )
-    else:
-        vector_db = FAISS.from_documents(
-            [Document(page_content="init")],
-            embedding_model
-        )
-        vector_db.save_local(VECTOR_DIR)
-
-
-def add_to_vectorstore(chunks, document_id):
-    global vector_db
-
+def add_to_vectorstore(chunks: list[str], document_id: str):
+    doc_dir = os.path.join(VECTOR_DIR, document_id)
     docs = [
         Document(
             page_content=chunk,
@@ -40,14 +19,26 @@ def add_to_vectorstore(chunks, document_id):
         for chunk in chunks
     ]
 
-    vector_db.add_documents(docs)
-    vector_db.save_local(VECTOR_DIR)
+    # Create or update isolated index per document ID
+    vector_db = FAISS.from_documents(docs, embedding_model)
+    vector_db.save_local(doc_dir)
 
+# caching
+loaded_indexes = {}
 
-def similarity_search(query, k=5):
-    global vector_db
+def get_document_retriever(document_id: str, k: int = 5):
+    doc_dir = os.path.join(VECTOR_DIR, document_id)
+    if not os.path.exists(doc_dir):
+        raise ValueError(f"No vector index found for document: {document_id}")
 
-    return vector_db.similarity_search(query, k=k)
+    # Check cache first
+    if document_id not in loaded_indexes:
+        loaded_indexes[document_id] = FAISS.load_local(
+            doc_dir,
+            embedding_model,
+            allow_dangerous_deserialization=True
+        )
 
-
-load_or_create_db()
+    return loaded_indexes[document_id].as_retriever(
+        search_kwargs={"k": k}
+    )

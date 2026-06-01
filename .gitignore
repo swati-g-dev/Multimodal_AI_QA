@@ -4,19 +4,27 @@ __pycache__/
 venv/
 .env
 
+backend/uploads/
+
 # Node
 node_modules/
 dist/
-
-# Logs
+build/
 *.log
 
 # OS
 .DS_Store
-
-
-db.sqlite3
 faiss_index/
-uploads/*
+*.db
+
+
 !uploads/.gitkeep
 .dockerignore
+
+temp_*
+
+backend/vector_store/
+
+backend/tests/test_rag.py
+backend/app/api/routes/summary.py
+backend/app/api/routes/timestamp.py
