@@ -5,6 +5,7 @@ venv/
 .env
 
 backend/uploads/
+backend/vector_store/
 
 # Node
 node_modules/
@@ -23,7 +24,5 @@ faiss_index/
 
 temp_*
 
-backend/vector_store/
 
 backend/tests/test_rag.py
-backend/app/api/routes/timestamp.py
