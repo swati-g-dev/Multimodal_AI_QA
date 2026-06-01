@@ -26,5 +26,4 @@ temp_*
 backend/vector_store/
 
 backend/tests/test_rag.py
-backend/app/api/routes/summary.py
 backend/app/api/routes/timestamp.py
