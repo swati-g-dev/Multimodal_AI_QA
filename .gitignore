@@ -26,5 +26,3 @@ temp_*
 
 
 backend/tests/test_rag.py
-backend/app/services/timestamp_service.py
-backend/app/api/routes/timestamp.py
