@@ -1,5 +1,5 @@
-import { useState } from "react";
 import API from "../api/api";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 export default function Upload({ setDocumentId }) {
   const [file, setFile] = useState(null);
 
-  const handleUpload = async () => {
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+
     if (!file) {
       return alert("Please select a file to upload.");
     }

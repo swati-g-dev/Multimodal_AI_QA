@@ -1,32 +1,69 @@
-import { useState } from "react";
-import Upload from "./components/Upload";
-import Chat from "./components/Chat";
-import Summary from "./components/Summary";
-import VideoPlayer from "./components/VideoPlayer";
+import { useState } from 'react';
+import axios from 'axios';
+import ReactPlayer from 'react-player';
 
-export default function App() {
-  const [documentId, setDocumentId] = useState("");
+function App() {
+  const [files, setFiles] = useState([]);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [timestamp, setTimestamp] = useState("00:00");
+  const [videoUrl, setVideoUrl] = useState(""); // For demo, use public URL or uploaded blob
+
+  const handleUpload = async (e) => {
+    const formData = new FormData();
+    formData.append("file", e.target.files[0]);
+    const res = await axios.post("http://localhost:8000/documents/upload", formData);
+    setFiles([...files, res.data]);
+  };
+
+  const askQuestion = async () => {
+    if (!selectedDoc) return;
+    const res = await axios.post("http://localhost:8000/chat/", {
+      document_id: selectedDoc,
+      question
+    });
+    setAnswer(res.data.answer);
+    setTimestamp(res.data.timestamp || "00:01:23");
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">
-        AI Document & Media Q&A
-      </h1>
+    <div className="min-h-screen bg-gray-950 text-white p-8">
+      <h1 className="text-4xl font-bold mb-8">DocQA AI - Documents &amp; Multimedia</h1>
+      
+      <input type="file" onChange={handleUpload} className="mb-8" accept=".pdf,.mp3,.mp4,.wav" />
+      
+      <div className="grid grid-cols-2 gap-8">
+        <div>
+          <h2>Uploaded Documents</h2>
+          {files.map(f => (
+            <button key={f.id} onClick={() => setSelectedDoc(f.id)} className="block p-4 bg-zinc-900 my-2 w-full text-left">
+              {f.filename}
+            </button>
+          ))}
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Upload setDocumentId={setDocumentId} />
-        {/* check how it looks and whether is good to have i tor avoid */}
-        {/* {documentId && (
-          <div className="bg-green-900 p-3 rounded">
-            Active Document ID: {documentId}
-          </div>
-        )} */}
-        <Chat documentId={documentId} />
-
-        <Summary documentId={documentId} />
-
-        <VideoPlayer documentId={documentId} />
+        <div>
+          <input value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ask a question..." className="w-full p-4 bg-zinc-900" />
+          <button onClick={askQuestion} className="mt-4 bg-blue-600 px-8 py-3">Ask</button>
+          
+          {answer && <div className="mt-8 p-6 bg-zinc-900 rounded-xl">{answer}</div>}
+          
+          {timestamp && (
+            <button 
+              onClick={() => {/* seek video player to timestamp */ alert(`Jump to ${timestamp}`)}}
+              className="mt-4 bg-green-600 px-6 py-2"
+            >
+              ▶ Play from {timestamp}
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Video Player Demo */}
+      <ReactPlayer url={videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"} controls />
     </div>
   );
 }
+
+export default App;

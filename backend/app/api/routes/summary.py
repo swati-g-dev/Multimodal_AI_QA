@@ -15,7 +15,7 @@ async def summarize(req: SummaryRequest):
         if not text.strip():
             raise HTTPException(status_code=44, detail="Document content not found.")
 
-        if len(text) < 12000:
+        if len(text) < 15000:
             return generate_summary(req.document_id)
         else:
             return generate_summary_long(req.document_id)
