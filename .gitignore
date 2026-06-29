@@ -26,3 +26,4 @@ temp_*
 
 
 backend/tests/test_rag.py
+frontend/src/components/VideoPlayer.jsx

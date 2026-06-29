@@ -11,7 +11,5 @@
 - FastAPI + LangChain + FAISS
 - React + Tailwind + shadcn
 - Whisper (transcription)
-- Redis (cache)
+<!-- - Redis (cache) -->
 
-## Setup
-Follow step-by-step phases.
